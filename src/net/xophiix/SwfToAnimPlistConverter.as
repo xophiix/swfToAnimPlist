@@ -14,6 +14,8 @@ package net.xophiix
 	import flash.filesystem.FileStream;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
+	import flash.system.Capabilities;
+	import flash.system.System;
 	import flash.utils.ByteArray;
 	
 	import mx.graphics.codec.PNGEncoder;
@@ -100,7 +102,7 @@ package net.xophiix
 						}
 						
 						if (lastFrame) {
-							lastFrame.delayUnits = swf.currentFrame - lastFrameIndex + 1;	
+							lastFrame.delayUnits = swf.currentFrame - lastFrameIndex;
 						}
 						
 						var frame:Object = new Object;														
@@ -109,8 +111,7 @@ package net.xophiix
 						
 						lastFrame = frame;
 						lastFrameIndex = swf.currentFrame;
-						
-						++actualFrameIndex;
+						++actualFrameIndex;						
 						
 						// save bitmapdata as png
 						var fs:FileStream = new FileStream;
@@ -158,8 +159,14 @@ package net.xophiix
 				return;
 			}
 			
+			var os:String = Capabilities.os;
+			var processFileName:String = "sprite-mapper";
+			if (os.toLowerCase().indexOf("windows") >= 0) {
+				processFileName += ".bat";	
+			}
+			
 			var nativeProcessStartupInfo:NativeProcessStartupInfo = new NativeProcessStartupInfo();
-			var file:File = File.applicationDirectory.resolvePath("sprite-mapper");
+			var file:File = File.applicationDirectory.resolvePath(processFileName);
 			nativeProcessStartupInfo.executable = file;
 			
 			var processArgs:Vector.<String> = new Vector.<String>();	
