@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+					   xmlns:s="library://ns.adobe.com/flex/spark"
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   width="496" height="290">
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.controls.SWFLoader;
+			import mx.managers.CursorManager;
+			
+			import net.xophiix.SwfToAnimPlistConverter;
+			
+			import spark.events.TextOperationEvent;
+			
+			override protected function initializationComplete():void {
+				super.initializationComplete();
+				
+				swfPreview.addEventListener(Event.COMPLETE, function (event:Event):void {
+					var swf:MovieClip = swfPreview.content as MovieClip;					
+					var info:String = "swf basic info: \ntotal frames: " + swf.totalFrames + "   fps: " + swf.loaderInfo.frameRate;
+					swfInfo.text = info;
+				});
+				
+				swfPreview.addEventListener(IOErrorEvent.IO_ERROR, function (event:Event):void {					
+					swfInfo.text = "";					
+				});
+				
+				NativeApplication.nativeApplication.addEventListener(InvokeEvent.INVOKE, onAppInvoke);
+			}
+			
+			protected function onAppInvoke(event:InvokeEvent):void {
+				if (event.arguments.length > 0) {
+					trace("Arguments: " + event.arguments.toString());
+					try {
+						performConvert(new File(event.arguments[1]), new File(event.arguments[2]), {
+							enablePrefix: event.arguments[3] == "true", 
+							dependPrefix: event.arguments[4]
+						}, function (error:String = null):void {							
+							
+						});
+					} catch (error:Error) {
+						
+					}
+				}
+			}
+			
+			protected function onConvertBtnClick(event:MouseEvent):void {
+				try {
+					CursorManager.setBusyCursor();
+					this.enabled = this.mouseEnabled = this.mouseChildren = false;
+					var self:SwfToAnimPlist = this;
+					
+					performConvert(new File(swfPath.text), new File(outputPath.text), {
+						enablePrefix: useDependPrefix.selected, 
+						dependPrefix: outputDependPrefix.text
+					}, function (error:String = null):void {						
+						CursorManager.removeBusyCursor();
+						self.enabled = self.mouseEnabled = self.mouseChildren = true;
+						if (error != null) {
+							Alert.show(error, "error");
+						} else {
+							Alert.show("convert done!", "tip");
+						}
+					});
+				} catch (error:Error) {
+					Alert.show(error.toString(), "error");
+				}
+			}
+			
+			protected function performConvert(swfPath:File, outputPath:File, option:Object, callback:Function) {
+				var converter:SwfToAnimPlistConverter = new SwfToAnimPlistConverter;
+				converter.convert(swfPath, outputPath, option, callback);
+			}
+			
+			protected function onSwfPathSet(event:TextOperationEvent):void {				
+				swfPreview.load("file://" + swfPath.text);
+			}
+			
+			protected function onBrowseSwfPathBtnClick(event:Event):void {
+				var file:File = new File();
+				file.addEventListener(Event.SELECT, function (event:Event):void {
+					swfPath.text = file.nativePath;
+					swfPreview.load(file.url);
+				});
+				
+				file.browseForOpen("Choose swf file to convert", [
+					new FileFilter("flash file", "*.swf")
+				]);				
+			}
+			
+			protected function onBrowseOutputPathClick(event:Event):void {
+				var file:File = new File();
+				file.addEventListener(Event.SELECT, function (event:Event):void {
+					outputPath.text = file.nativePath;
+				});
+				
+				file.browseForDirectory("Choose plist save directory");
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>		
+	</fx:Declarations>	
+	<s:Button bottom="48" width="97" height="38" label="convert" click="onConvertBtnClick(event)"
+			  enabled="true" horizontalCenter="4"/>
+	<s:Group left="10" right="10" top="10" bottom="171" horizontalCenter="0" verticalCenter="-81">
+		<s:TextInput id="outputDependPrefix" y="71" left="128" right="47" height="25"
+					 horizontalCenter="40"
+					 prompt="special for shana-ui engine, spritesheet's textureFileName should add rott path prefix to load correctly"/>
+		<s:TextInput id="swfPath" y="7" left="128" right="47" height="25"
+					 change="onSwfPathSet(event)" horizontalCenter="40"/>
+		<s:Button id="browseSwfBtn" y="8" right="10" width="33" label="..."
+				  click="onBrowseSwfPathBtnClick(event)"/>
+		<s:Label y="7" left="31" width="93" height="25" fontFamily="Arial" text="swf path"
+				 textAlign="right" verticalAlign="middle"/>
+		<s:TextInput id="outputPath" y="39" left="128" right="47" height="25" horizontalCenter="40"/>
+		<s:Button id="browseOutputPathBtn" y="40" right="10" width="33" label="..."
+				  click="onBrowseOutputPathClick(event)"/>
+		<s:Label y="39" left="31" width="93" height="25" fontFamily="华文Arial黑" text="output path"
+				 textAlign="right" verticalAlign="middle"/>
+		<s:CheckBox id="useDependPrefix" y="71" left="10" width="118" height="25"
+					label="use depend prefix" selected="true"/>
+	</s:Group>
+	<s:Group left="10" right="10" top="126" bottom="94" horizontalCenter="0" verticalCenter="16">
+		<s:Label id="swfInfo" y="10" left="10" right="79" height="50"/>
+		<s:SWFLoader id="swfPreview" right="7" width="61" height="57" verticalCenter="-1"/>
+	</s:Group>
+</s:WindowedApplication>
