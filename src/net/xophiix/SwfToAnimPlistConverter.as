@@ -162,10 +162,21 @@ package net.xophiix
 
 			var javaPath:File;
 			if (windows) {
-				try {
-					javaPath = new File("C:/Program Files/Java/jre7/bin/java.exe");	
-				} catch (error:Error) {
-					javaPath = new File("C:/Program Files(x86)/Java/jre7/bin/java.exe");
+				var paths:Array = [
+					"C:/Program Files/Java/jre6/bin/java.exe",
+					"C:/Program Files(x86)/Java/jre6/bin/java.exe",
+					"C:/Program Files/Java/jre7/bin/java.exe",
+					"C:/Program Files(x86)/Java/jre7/bin/java.exe"
+				];
+				
+				var pathFound:Boolean = false;
+				for (var i:uint = 0; i < paths.length && !pathFound; ++i) {
+					try {
+						javaPath = new File(paths[i]);
+						pathFound = javaPath.exists;
+					} catch (error:Error) {
+						pathFound = false;
+					}
 				}
 			} else {
 				javaPath = new File("/usr/bin/java");
