@@ -1,6 +1,6 @@
 SwfToAnimPlist
 ==============
-A gui tool written by AIR to convert swf or image sequence to cocos2d animation plist.
+A gui tool written by AIR to convert swf to cocos2d animation plist.
 
 ##requirement
 java6 or java7 runtime
@@ -27,3 +27,7 @@ https://github.com/huandu/spritemapper
 ###about the `use depend prefix` option
 this option is specific for my current project while normal cocos2d usage always use no prefix, so you should uncheck it.
 when checked and given the prefix `res/ui`, then the final spritesheet's `textureFileName` should add this prefix to stands for a relative path to my project's resource root, and without .png extesion. e.g. `res/ui/my_texture` insteadof `my_texture.png`. so does the `spritesheets` array item in animation plist, e.g. `res/ui/my_spritesheet` instead of `my_spritesheet.plist`.
+
+##TODO
+* convert png sequences directly
+* combine multiple swf into one file, assign animation name respectly
