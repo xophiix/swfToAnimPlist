@@ -48,7 +48,7 @@ package net.xophiix
 				
 				var fileList:Vector.<File> = new Vector.<File>();						
 				if (swf.totalFrames > 0) {
-					var animation = new Object;							
+					var animation:Object = new Object;							
 					animation.properties = new Object;
 					// always use format 2
 					animation.properties.format = 2;

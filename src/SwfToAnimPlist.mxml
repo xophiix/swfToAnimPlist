@@ -70,7 +70,7 @@
 				}
 			}
 			
-			protected function performConvert(swfPath:File, outputPath:File, option:Object, callback:Function) {
+			protected function performConvert(swfPath:File, outputPath:File, option:Object, callback:Function):void {
 				var converter:SwfToAnimPlistConverter = new SwfToAnimPlistConverter;
 				converter.convert(swfPath, outputPath, option, callback);
 			}
