@@ -160,26 +160,37 @@ package net.xophiix
 			}
 			
 			var os:String = Capabilities.os;
-			var processFileName:String = "sprite-mapper";
-			if (os.toLowerCase().indexOf("windows") >= 0) {
-				processFileName += ".bat";	
+			var windows:Boolean = os.toLowerCase().indexOf("windows") >= 0;
+
+			var javaPath:File;
+			if (windows) {
+				try {
+					javaPath = new File("C:/Program Files/Java/jre7/bin/java.exe");	
+				} catch (error:Error) {
+					javaPath = new File("C:/Program Files(x86)/Java/jre7/bin/java.exe");
+				}
+			} else {
+				javaPath = new File("/usr/bin/java");
 			}
 			
 			var nativeProcessStartupInfo:NativeProcessStartupInfo = new NativeProcessStartupInfo();
-			var file:File = File.applicationDirectory.resolvePath(processFileName);
-			nativeProcessStartupInfo.executable = file;
+			var jarPath:File = File.applicationDirectory.resolvePath("SpriteMapper.jar");
 			
-			var processArgs:Vector.<String> = new Vector.<String>();	
-			processArgs.push(outputPath.nativePath);
+			nativeProcessStartupInfo.executable = javaPath;
+			nativeProcessStartupInfo.workingDirectory = outputPath;
+					
+			var processArgs:Vector.<String> = new Vector.<String>();
+			processArgs.push(
+				"-Xmx2g", "-Djava.awt.headless=true",
+				"-jar", jarPath.nativePath,
+				"--output=" + pureFileName + ".packed.png",
+				"--zwoptex2=" + pureFileName + ".meta.plist",
+				"--trim", "--algorithm=shelf", "--keep-dir"
+			);
+			
 			for (var i:uint = 0; i < fileList.length; ++i) {					
 				processArgs.push(fileList[i].name);
 			}
-			
-			processArgs.push("--output=" + pureFileName + ".packed.png");
-			processArgs.push("--zwoptex2=" + pureFileName + ".meta.plist");
-			processArgs.push("--trim");
-			processArgs.push("--algorithm=shelf");
-			processArgs.push("--keep-dir");
 			
 			nativeProcessStartupInfo.arguments = processArgs;
 			trace(nativeProcessStartupInfo.executable.nativePath, processArgs.join(" "));
