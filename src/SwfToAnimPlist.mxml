@@ -64,6 +64,8 @@
 						}
 					});
 				} catch (error:Error) {
+					CursorManager.removeBusyCursor();
+					self.enabled = self.mouseEnabled = self.mouseChildren = true;
 					Alert.show(error.toString(), "error");
 				}
 			}

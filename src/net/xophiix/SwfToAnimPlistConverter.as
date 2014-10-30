@@ -12,10 +12,8 @@ package net.xophiix
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
-	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.system.Capabilities;
-	import flash.system.System;
 	import flash.utils.ByteArray;
 	
 	import mx.graphics.codec.PNGEncoder;
@@ -220,36 +218,35 @@ package net.xophiix
 				if (0 == event.exitCode) {					
 					if (enablePrefix) {
 						// adjust textureFileName with prefix in xxx.packed.plist
-						var loader:URLLoader = new URLLoader();						
-						var metaPlistPath:String = outputPath.resolvePath(pureFileName + ".meta.plist").url;
-						loader.load(new URLRequest(metaPlistPath));
-						loader.addEventListener(Event.COMPLETE, function (event:Event):void {
-							var packedMetaPlist:Plist10 = new Plist10;
-							var packedMeta:Object = packedMetaPlist.decode(event.target.data);
-							var orgTextureName:String = packedMeta.metadata.textureFileName;							
-							packedMeta.metadata.textureFileName = dependPrefix + orgTextureName.replace(".png", "");
-							
-							if (!savePlist(packedMeta, metaPlistPath)) {
-								callback("rewrite packed meta plist file failed");
-								return;
-							}
-							
-							for (var i:uint = 0; i < fileList.length; ++i) {					
-								fileList[i].deleteFile();
-							}
-							
-							if (savePlist(animation, outputPath.resolvePath(pureFileName + ".anim.plist").url)) {
-								callback();
-							} else {
-								callback("write animation plist file failed");
-							}	
-						});	
+						var metaFile:FileStream = new FileStream;
+						var metaPlistPath:File = outputPath.resolvePath(pureFileName + ".meta.plist");
+						metaFile.open(metaPlistPath, FileMode.READ);
 						
-						loader.addEventListener(IOErrorEvent.IO_ERROR, function (event:Event):void {
-							callback("load " + pureFileName + ".packed.plist failed: " + event.toString());
-						});
+						var metaContent:String = metaFile.readUTFBytes(metaFile.bytesAvailable);
+						metaFile.close();
+						
+						var packedMetaPlist:Plist10 = new Plist10;
+						var packedMeta:Object = packedMetaPlist.decode(metaContent);
+						
+						var orgTextureName:String = packedMeta.metadata.textureFileName;							
+						packedMeta.metadata.textureFileName = dependPrefix + orgTextureName.replace(".png", "");
+						
+						if (!savePlist(packedMeta, metaPlistPath)) {
+							callback("rewrite packed meta plist file failed");
+							return;
+						}
+						
+						for (var i:uint = 0; i < fileList.length; ++i) {					
+							fileList[i].deleteFile();
+						}
+						
+						if (savePlist(animation, outputPath.resolvePath(pureFileName + ".anim.plist"))) {
+							callback();
+						} else {
+							callback("write animation plist file failed");
+						}	
 					} else {
-						if (savePlist(animation, outputPath.resolvePath(pureFileName + ".anim.plist").url)) {
+						if (savePlist(animation, outputPath.resolvePath(pureFileName + ".anim.plist"))) {
 							callback();
 						} else {
 							callback("write animation plist file failed");
@@ -261,15 +258,13 @@ package net.xophiix
 			}
 		}
 		
-		private function savePlist(object:Object, outputFileName:String):Boolean {
+		private function savePlist(object:Object, outputFileName:File):Boolean {
 			if (!object) {
 				return false;
 			}
 			
-			var fs:FileStream = new FileStream;				
-			var file:File = new File(outputFileName);
-			
-			fs.open(file, FileMode.WRITE);									
+			var fs:FileStream = new FileStream;
+			fs.open(outputFileName, FileMode.WRITE);									
 			fs.writeUTFBytes((new Plist10).encode(object));
 			fs.close();			
 			return true;
