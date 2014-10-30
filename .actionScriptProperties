@@ -27,7 +27,7 @@
   <flashCatalyst validateFlashCatalystCompatibility="false"/>
   <buildTargets>
     <buildTarget buildTargetName="default">
-      <airSettings airCertificatePath="/Users/xophiix/Documents/Adobe Flash Builder 4.6/cert.p12" airTimestamp="true" anePathSet="true" version="1">
+      <airSettings airCertificatePath="cert.p12" airTimestamp="true" anePathSet="true" version="1">
         <airExcludes>
           <pathEntry path="chat.swf"/>
           <pathEntry path=".DS_Store"/>
