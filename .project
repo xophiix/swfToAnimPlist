@@ -3,6 +3,7 @@
 	<name>SwfToAnimPlist</name>
 	<comment></comment>
 	<projects>
+		<project>as3plist</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

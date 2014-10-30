@@ -34,7 +34,7 @@
 
 	<!-- Description, displayed in the AIR application installer.
 	May have multiple values for each language. See samples or xsd schema file. Optional. -->
-	<!-- <description></description> -->
+	<description>A gui tool written by AIR to convert swf to cocos2d animation plist. https://github.com/xophiix/swfToAnimPlist</description>
 
 	<!-- Copyright information. Optional -->
 	<!-- <copyright></copyright> -->
@@ -125,17 +125,13 @@
 
 	<!-- The icon the system uses for the application. For at least one resolution,
 	specify the path to a PNG file included in the AIR package. Optional. -->
-	<!-- <icon>
-		<image16x16></image16x16>
-		<image32x32></image32x32>
-		<image36x36></image36x36>
-		<image48x48></image48x48>
-		<image57x57></image57x57>
-		<image72x72></image72x72>
-		<image114x114></image114x114>
-		<image128x128></image128x128>
-	</icon> -->
-
+	<icon>
+		<image16x16>icons/AIRApp_16.png</image16x16>
+		<image32x32>icons/AIRApp_32.png</image32x32>
+		<image48x48>icons/AIRApp_48.png</image48x48>
+		<image128x128>icons/AIRApp_128.png</image128x128>
+	</icon>
+	
 	<!-- Whether the application handles the update when a user double-clicks an update version
 	of the AIR file (true), or the default AIR application installer handles the update (false).
 	Optional. Default false. -->

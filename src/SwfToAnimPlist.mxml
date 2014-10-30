@@ -5,6 +5,8 @@
 					   width="496" height="290">
 	<fx:Script>
 		<![CDATA[
+			import flash.net.navigateToURL;
+			
 			import mx.controls.Alert;
 			import mx.controls.SWFLoader;
 			import mx.managers.CursorManager;
@@ -99,6 +101,11 @@
 				
 				file.browseForDirectory("Choose plist save directory");
 			}
+			
+			protected function onAbout(event:MouseEvent):void {				
+				navigateToURL(new URLRequest("https://github.com/xophiix/swfToAnimPlist#tips"), "_blank");
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -123,6 +130,9 @@
 				 textAlign="right" verticalAlign="middle"/>
 		<s:CheckBox id="useDependPrefix" y="71" left="10" width="118" height="25"
 					label="use depend prefix" selected="true"/>
+		<mx:LinkButton id="aboutLink" x="0" y="-1" width="32" height="32" label="❔"
+					   click="onAbout(event)" fontSize="16" fontWeight="normal" textAlign="center"
+					   textDecoration="none"/>
 	</s:Group>
 	<s:Group left="10" right="10" top="126" bottom="94" horizontalCenter="0" verticalCenter="16">
 		<s:Label id="swfInfo" y="10" left="10" right="79" height="50"/>
